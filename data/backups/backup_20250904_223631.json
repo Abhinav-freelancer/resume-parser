@@ -1,0 +1,20 @@
+{
+  "candidates": [
+    {
+      "id": 999,
+      "name": "Test Candidate",
+      "email": "test@example.com",
+      "skills": [
+        "Python",
+        "JavaScript"
+      ],
+      "status": "Applied",
+      "created_date": "2025-09-04T22:28:48.119731",
+      "updated_date": "2025-09-04T22:28:48.119795"
+    }
+  ],
+  "jobs": [],
+  "interviews": [],
+  "match_scores": {},
+  "next_id": 1
+}

@@ -1,0 +1,72 @@
+{
+  "candidates": [
+    {
+      "id": 999,
+      "name": "Test Candidate",
+      "email": "test@example.com",
+      "skills": [
+        "Python",
+        "JavaScript"
+      ],
+      "status": "Applied",
+      "created_date": "2025-09-04T22:36:31.613849",
+      "updated_date": "2025-09-04T22:36:31.613899"
+    }
+  ],
+  "jobs": [
+    {
+      "id": 1,
+      "title": "Senior Software Engineer",
+      "description": "Develop and maintain scalable web applications using modern JavaScript frameworks and cloud technologies.",
+      "skills": [
+        "JavaScript",
+        "React",
+        "Node.js",
+        "AWS",
+        "Docker"
+      ],
+      "experience_level": "Senior",
+      "department": "Engineering",
+      "location": "San Francisco, CA",
+      "status": "Active",
+      "created_at": "2025-09-04T22:56:52.448653"
+    },
+    {
+      "id": 2,
+      "title": "Data Scientist",
+      "description": "Build predictive models and analyze large datasets to drive business insights.",
+      "skills": [
+        "Python",
+        "Machine Learning",
+        "TensorFlow",
+        "SQL",
+        "Statistics"
+      ],
+      "experience_level": "Mid-level",
+      "department": "Data Science",
+      "location": "New York, NY",
+      "status": "Active",
+      "created_at": "2025-09-04T22:56:52.448689"
+    },
+    {
+      "id": 3,
+      "title": "DevOps Engineer",
+      "description": "Manage CI/CD pipelines and cloud infrastructure to ensure reliable deployments.",
+      "skills": [
+        "AWS",
+        "Kubernetes",
+        "Docker",
+        "Jenkins",
+        "Linux"
+      ],
+      "experience_level": "Mid-level",
+      "department": "Operations",
+      "location": "Remote",
+      "status": "Active",
+      "created_at": "2025-09-04T22:56:52.448694"
+    }
+  ],
+  "interviews": [],
+  "match_scores": {},
+  "next_id": 4
+}
