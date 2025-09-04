@@ -1,0 +1,106 @@
+Q: About HireAI Pro
+A: HireAI Pro is an automated recruitment platform built by Team RASAR. It helps candidates apply for jobs, upload resumes, and track their progress in real time. Recruiters can manage jobs, evaluate applications fairly, and schedule interviews directly inside the platform. Both light and dark modes are supported so users can choose their preferred interface.
+
+Q: Resume Upload and Extraction
+A: Candidates can upload resumes in PDF, DOC, or DOCX formats. The system automatically extracts key details such as name, contact information, educational qualifications, skills, experience level, and location. A single resume can be applied to multiple jobs. For each job, the system calculates an Extraction Confidence score, which shows how closely the resume matches the job description. The higher the score, the better the match.
+
+Q: Bias-Aware Screening
+A: HireAI Pro includes a bias-aware screening engine. This means the system evaluates resumes based only on skills and experience. Factors like gender, age, background, or personal details are ignored to ensure fair screening and equal opportunities for all candidates.
+
+Q: Application Status
+A: Candidates can track the status of their applications through their dashboard. The updates may include 'Resume Received', 'Under Review', 'Interview Scheduled', and 'Final Decision'.
+
+Q: Interview Scheduling
+A: Recruiters can publish available interview slots, and candidates can select a convenient time. Recruiters can confirm or reschedule interviews using the built-in calendar.
+
+Q: Structured Interview Scorecards
+A: Interviewers evaluate candidates using structured scorecards. These scorecards include categories such as technical knowledge, problem-solving, communication, and cultural fit. Each candidate is assessed consistently and fairly.
+
+Q: Recruiter Dashboard
+A: The recruiter dashboard shows active jobs, total candidates, scheduled interviews, and average match scores. It also provides a quick view of the candidate pipeline and recent applications.
+
+Q: Jobs and Candidates Tabs
+A: The Jobs tab allows recruiters to create, edit, delete, and manage job postings. Recruiters can also see which candidates have applied. The Candidates tab allows filtering based on job role or stage of the hiring process (Applied, Screening, Interview Scheduled, Offer, Rejected).
+
+Q: Analytics and Reports
+A: HireAI Pro provides insights into skills in demand, application sources, match score distribution, and hiring timelines. Recruiters can use these reports to optimize their hiring strategies.
+
+Q: Support
+A: If candidates or recruiters face issues, they can use the built-in support chat to reach the HireAI Pro team.
+
+
+Candidate FAQs
+
+Q: Do I need to create an account before applying for jobs?
+A: To apply for any job on HireAI Pro, you need to create a candidate account. This account stores your resume, tracks your applications, and allows you to log in later to check your status updates.
+
+Q: Can I edit or update my resume after uploading it?
+A: Once a resume is uploaded, it cannot be edited directly. If you need to update details, you should upload a new version of your resume and use it for future applications.
+
+Q: Can I withdraw an application if I change my mind?
+A: You can withdraw an application through the candidate portal at any time. Once withdrawn, the job will no longer appear in your active application list, and recruiters will not continue reviewing it.
+
+Q: What happens if the system extracts wrong information from my resume?
+A: If the automatic extraction misses or misreads certain details, you can correct key information in your candidate profile. Recruiters still have access to your full resume document, so they will see the original file as well.
+
+Q: How long does it take to hear back after applying?
+A: Typically, candidates can expect to receive initial updates within a few days of applying. Since recruiters control the pace of screening and scheduling, timelines may vary by job.
+
+Q: Is my personal data secure on HireAI Pro?
+A: All resumes and personal data are stored securely and used only for recruitment purposes. The resume 
+
+Q: Will there be bias in resume evaluation?
+A: The bias-aware engine also ensures that sensitive personal details such as gender or age are not used in candidate evaluation.
+
+Q: Can I track multiple applications at once?
+A: The candidate dashboard allows you to view all your applications in one place. Each application will have its own status updates, so you can monitor progress across multiple jobs at the same time.
+
+Q: Does HireAI Pro guarantee a job if my score is high?
+A: The Extraction Confidence score is designed to help recruiters quickly identify strong matches, but the final hiring decision depends on the interview process and the recruiter’s judgment.
+
+Q: How do I know if I am selected?
+A: You will get a mail from the recruiter informing you that you are selected. You will be informed of the next steps in the mail sent.
+
+Recruiter FAQs
+
+Q: How do recruiters create and post jobs?
+A: Recruiters can create new job postings from the Jobs tab. Each posting includes fields for title, description, required skills, and experience level. Once published, jobs become visible to candidates immediately.
+
+Q: Can recruiters edit or delete job postings after publishing?
+A: Job postings can be edited or deleted at any time from the Jobs tab. Editing a posting updates the details shown to candidates, and deleting removes it from the active listings.
+
+Q: How do recruiters shortlist candidates?
+A: Recruiters can filter candidates by skills, Extraction Confidence score, and application stage. The bias-aware screening ensures that shortlisting focuses on relevant qualifications instead of personal details.
+
+Q: How does the structured interview scorecard work?
+A: Each candidate interview is evaluated using a structured scorecard. The scorecard includes categories such as technical expertise, communication, problem-solving ability, and cultural fit. This ensures that every candidate is assessed consistently.
+
+Q: Can recruiters customize the scorecard categories? (assumed)
+A: Recruiters may adjust or weight scorecard categories to suit the requirements of a specific role, though the core categories remain to maintain fairness.
+
+Q: Can recruiters export candidate data or reports? (assumed)
+A: Recruiters can export reports on candidate pipelines, interview results, and hiring timelines in common formats such as CSV or PDF.
+
+Q: How many users can be added to a recruiter account? (assumed)
+A: Multiple team members can collaborate under the same recruiter account. Administrators can invite other recruiters to join, assign roles, and share access to jobs and candidate data.
+
+
+General and Technical FAQs
+
+Q: What file formats are supported for resumes?
+A: Candidates can upload resumes in PDF, DOC, and DOCX formats. Other formats are not currently supported.
+
+Q: What is the Extraction Confidence score and how is it calculated?
+A: The Extraction Confidence score compares the candidate’s skills and experience with the job description. A higher score indicates a stronger match, though it is not a guarantee of selection.
+
+Q: Does the system work on mobile devices? (assumed)
+A: HireAI Pro is designed to be mobile-friendly, and both candidates and recruiters can access their dashboards using smartphones or tablets.
+
+Q: Can HireAI Pro integrate with external HR systems like LinkedIn or Workday? (assumed)
+A: At present, HireAI Pro can integrate with certain external platforms to import candidate data and export reports, but the scope of integrations may vary depending on the recruiter’s plan.
+
+Q: Can I upload resumes in multiple languages?
+A: Currently, resumes and job descriptions should be submitted in English for best results. Support for additional languages may be added in future updates.
+
+Q: What are the languages that are supported?
+A: Only English is supported at the moment.
