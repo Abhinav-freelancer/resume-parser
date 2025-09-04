@@ -1,12 +1,49 @@
 // Enhanced AI Hiring Management System - JavaScript Implementation
 // FIXED VERSION with Real Resume Parsing and High Contrast UI
 
-// Backend API Configuration
-const API_BASE_URL = 'http://localhost:8000';
-
-// Enhanced Data Storage with backend integration
+// Enhanced Data Storage with better state management
 let appState = {
-    jobs: [],
+    jobs: [
+        {
+            id: 1,
+            title: "Senior Full Stack Developer",
+            description: "We are looking for a Senior Full Stack Developer with expertise in React, Node.js, and cloud platforms.",
+            skills: ["React", "Node.js", "Python", "AWS", "Docker", "MongoDB"],
+            experience_level: "Senior",
+            status: "Active",
+            created_date: "2025-08-20",
+            applications_count: 23,
+            department: "Engineering",
+            location: "San Francisco, CA",
+            salary_range: "$120,000 - $160,000"
+        },
+        {
+            id: 2,
+            title: "Data Scientist",
+            description: "Join our AI team to build machine learning models and extract insights from large datasets.",
+            skills: ["Python", "Machine Learning", "TensorFlow", "SQL", "Statistics", "Data Visualization"],
+            experience_level: "Mid-Level",
+            status: "Active",
+            created_date: "2025-08-18",
+            applications_count: 31,
+            department: "Data Science",
+            location: "Remote",
+            salary_range: "$90,000 - $130,000"
+        },
+        {
+            id: 3,
+            title: "DevOps Engineer",
+            description: "Manage our cloud infrastructure and CI/CD pipelines for scalable applications.",
+            skills: ["AWS", "Docker", "Kubernetes", "Jenkins", "Terraform", "Linux"],
+            experience_level: "Senior",
+            status: "Active",
+            created_date: "2025-08-15",
+            applications_count: 18,
+            department: "Engineering",
+            location: "New York, NY",
+            salary_range: "$110,000 - $150,000"
+        }
+    ],
     candidates: [],
     interviews: [],
     interviewers: [
@@ -15,137 +52,6 @@ let appState = {
         {"name": "Mike Johnson", "role": "Data Science Lead", "specialties": ["Machine Learning", "Python", "Statistics"]},
         {"name": "Lisa Chen", "role": "DevOps Manager", "specialties": ["AWS", "Kubernetes", "CI/CD"]}
     ]
-};
-
-// API Helper Functions
-const API = {
-    async request(endpoint, options = {}) {
-        const url = `${API_BASE_URL}${endpoint}`;
-        const config = {
-            headers: {
-                'Content-Type': 'application/json',
-                ...options.headers
-            },
-            ...options
-        };
-
-        try {
-            const response = await fetch(url, config);
-            if (!response.ok) {
-                throw new Error(`API Error: ${response.status} ${response.statusText}`);
-            }
-            return await response.json();
-        } catch (error) {
-            console.error(`API request failed: ${endpoint}`, error);
-            showToast(`API Error: ${error.message}`, 'error');
-            throw error;
-        }
-    },
-
-    // Jobs API
-    async getJobs() {
-        const response = await this.request('/api/jobs');
-        appState.jobs = response.jobs || [];
-        return appState.jobs;
-    },
-
-    async createJob(jobData) {
-        const data = await this.request('/api/jobs', {
-            method: 'POST',
-            body: JSON.stringify(jobData)
-        });
-        await this.getJobs(); // Refresh jobs list
-        return data;
-    },
-
-    async updateJob(jobId, jobData) {
-        const data = await this.request(`/api/jobs/${jobId}`, {
-            method: 'PUT',
-            body: JSON.stringify(jobData)
-        });
-        await this.getJobs(); // Refresh jobs list
-        return data;
-    },
-
-    async deleteJob(jobId) {
-        await this.request(`/api/jobs/${jobId}`, {
-            method: 'DELETE'
-        });
-        await this.getJobs(); // Refresh jobs list
-    },
-
-    // Candidates API
-    async getCandidates() {
-        const response = await this.request('/api/candidates');
-        appState.candidates = response.candidates || [];
-        return appState.candidates;
-    },
-
-    async createCandidate(candidateData) {
-        const data = await this.request('/api/candidates', {
-            method: 'POST',
-            body: JSON.stringify(candidateData)
-        });
-        await this.getCandidates(); // Refresh candidates list
-        return data;
-    },
-
-    async updateCandidate(candidateId, candidateData) {
-        const data = await this.request(`/api/candidates/${candidateId}`, {
-            method: 'PUT',
-            body: JSON.stringify(candidateData)
-        });
-        await this.getCandidates(); // Refresh candidates list
-        return data;
-    },
-
-    async deleteCandidate(candidateId) {
-        await this.request(`/api/candidates/${candidateId}`, {
-            method: 'DELETE'
-        });
-        await this.getCandidates(); // Refresh candidates list
-    },
-
-    // Resume Upload API
-    async uploadResume(file, jobId = null) {
-        const formData = new FormData();
-        formData.append('file', file);
-        if (jobId) {
-            formData.append('job_id', jobId.toString());
-        }
-
-        const response = await fetch(`${API_BASE_URL}/api/resumes/upload`, {
-            method: 'POST',
-            body: formData
-        });
-
-        if (!response.ok) {
-            throw new Error(`Upload failed: ${response.status} ${response.statusText}`);
-        }
-
-        return await response.json();
-    },
-
-    // Interviews API
-    async getInterviews() {
-        const response = await this.request('/api/interviews');
-        appState.interviews = response.interviews || [];
-        return appState.interviews;
-    },
-
-    async createInterview(interviewData) {
-        const data = await this.request('/api/interviews', {
-            method: 'POST',
-            body: JSON.stringify(interviewData)
-        });
-        await this.getInterviews(); // Refresh interviews list
-        return data;
-    },
-
-    // Analytics API
-    async getAnalytics() {
-        return await this.request('/api/analytics/dashboard');
-    }
 };
 
 // Sample resume texts for fallback - using real sample data
@@ -598,22 +504,34 @@ function updateProgressBar(percentage) {
     }
 }
 
-// Database Operations with backend API integration
+// Database Operations with enhanced validation
 const DB = {
-    async saveJob(jobData) {
+    saveJob: (jobData) => {
         try {
             if (!jobData.title || !jobData.description || !jobData.skills.length) {
                 throw new Error('Missing required job fields');
             }
 
             if (jobData.id) {
-                const result = await API.updateJob(jobData.id, jobData);
-                showToast('Job updated successfully!', 'success');
-                return result;
+                const index = appState.jobs.findIndex(j => j.id === jobData.id);
+                if (index !== -1) {
+                    appState.jobs[index] = { ...appState.jobs[index], ...jobData };
+                    showToast('Job updated successfully!', 'success');
+                    return appState.jobs[index];
+                } else {
+                    throw new Error('Job not found for update');
+                }
             } else {
-                const result = await API.createJob(jobData);
+                const newJob = {
+                    ...jobData,
+                    id: generateId(),
+                    status: 'Active',
+                    created_date: new Date().toISOString().split('T')[0],
+                    applications_count: 0
+                };
+                appState.jobs.push(newJob);
                 showToast('Job created successfully!', 'success');
-                return result;
+                return newJob;
             }
         } catch (error) {
             showToast(`Error saving job: ${error.message}`, 'error');
@@ -621,41 +539,40 @@ const DB = {
         }
     },
 
-    async getJobs(filters = {}) {
-        try {
-            let jobs = await API.getJobs();
-
-            if (filters.status) {
-                jobs = jobs.filter(job => job.status === filters.status);
-            }
-
-            if (filters.department) {
-                jobs = jobs.filter(job =>
-                    job.department && job.department.toLowerCase().includes(filters.department.toLowerCase())
-                );
-            }
-
-            return jobs;
-        } catch (error) {
-            console.error('Error fetching jobs:', error);
-            showToast('Error loading jobs from server', 'error');
-            return [];
+    getJobs: (filters = {}) => {
+        let filteredJobs = [...appState.jobs];
+        
+        if (filters.status) {
+            filteredJobs = filteredJobs.filter(job => job.status === filters.status);
         }
+        
+        if (filters.department) {
+            filteredJobs = filteredJobs.filter(job => 
+                job.department && job.department.toLowerCase().includes(filters.department.toLowerCase())
+            );
+        }
+        
+        return filteredJobs;
     },
 
-    async deleteJob(jobId) {
+    deleteJob: (jobId) => {
         try {
-            await API.deleteJob(jobId);
-            showToast('Job deleted successfully', 'success');
-            return true;
+            const index = appState.jobs.findIndex(j => j.id === jobId);
+            if (index !== -1) {
+                appState.jobs.splice(index, 1);
+                showToast('Job deleted successfully', 'success');
+                return true;
+            } else {
+                throw new Error('Job not found');
+            }
         } catch (error) {
             showToast(`Error deleting job: ${error.message}`, 'error');
             return false;
         }
     },
 
-    // ENHANCED Candidate operations with backend API integration
-    async saveCandidate(candidateData) {
+    // ENHANCED Candidate operations with real data processing
+    saveCandidate: (candidateData) => {
         try {
             if (!candidateData.name || !candidateData.email) {
                 throw new Error('Name and email are required');
@@ -666,8 +583,7 @@ const DB = {
                 throw new Error('Invalid email format');
             }
 
-            // Check for existing candidate locally (for frontend validation)
-            const existingCandidate = appState.candidates.find(c =>
+            const existingCandidate = appState.candidates.find(c => 
                 c.email === candidateData.email && c.id !== candidateData.id
             );
             if (existingCandidate) {
@@ -675,23 +591,47 @@ const DB = {
             }
 
             if (candidateData.id) {
-                const result = await API.updateCandidate(candidateData.id, candidateData);
-                showToast('Candidate updated successfully!', 'success');
-
-                if (currentView === 'candidates') {
-                    setTimeout(loadCandidates, 100);
+                const index = appState.candidates.findIndex(c => c.id === candidateData.id);
+                if (index !== -1) {
+                    appState.candidates[index] = { ...appState.candidates[index], ...candidateData };
+                    showToast('Candidate updated successfully!', 'success');
+                    
+                    if (currentView === 'candidates') {
+                        setTimeout(loadCandidates, 100);
+                    }
+                    
+                    return appState.candidates[index];
+                } else {
+                    throw new Error('Candidate not found for update');
                 }
-
-                return result;
             } else {
-                const result = await API.createCandidate(candidateData);
-                showToast('Candidate saved successfully from real document data! 🎉', 'success');
+                const newCandidate = {
+                    ...candidateData,
+                    id: generateId(),
+                    status: candidateData.status || 'Applied',
+                    created_date: new Date().toISOString().split('T')[0],
+                    applied_jobs: candidateData.applied_jobs || [],
+                    match_scores: candidateData.match_scores || [],
+                    extraction_confidence: candidateData.extraction_confidence || {}
+                };
 
+                // Calculate match scores for all jobs
+                appState.jobs.forEach(job => {
+                    const score = calculateMatchScore(newCandidate.skills, job.skills);
+                    newCandidate.match_scores.push({
+                        job_id: job.id,
+                        score: score
+                    });
+                });
+
+                appState.candidates.push(newCandidate);
+                showToast('Candidate saved successfully from real document data! 🎉', 'success');
+                
                 if (currentView === 'candidates') {
                     setTimeout(loadCandidates, 100);
                 }
-
-                return result;
+                
+                return newCandidate;
             }
         } catch (error) {
             showToast(`Error saving candidate: ${error.message}`, 'error');
@@ -700,110 +640,103 @@ const DB = {
         }
     },
 
-    async getCandidates(filters = {}) {
-        try {
-            let candidates = await API.getCandidates();
-
-            if (filters.status) {
-                candidates = candidates.filter(candidate =>
-                    candidate.status === filters.status
-                );
-            }
-
-            if (filters.jobId) {
-                candidates = candidates.filter(candidate =>
-                    candidate.applied_jobs && candidate.applied_jobs.includes(parseInt(filters.jobId))
-                );
-            }
-
-            if (filters.skills && filters.skills.length) {
-                candidates = candidates.filter(candidate =>
-                    filters.skills.some(skill => candidate.skills && candidate.skills.includes(skill))
-                );
-            }
-
-            return candidates;
-        } catch (error) {
-            console.error('Error fetching candidates:', error);
-            showToast('Error loading candidates from server', 'error');
-            return [];
+    getCandidates: (filters = {}) => {
+        let filteredCandidates = [...appState.candidates];
+        
+        if (filters.status) {
+            filteredCandidates = filteredCandidates.filter(candidate => 
+                candidate.status === filters.status
+            );
         }
+        
+        if (filters.jobId) {
+            filteredCandidates = filteredCandidates.filter(candidate => 
+                candidate.applied_jobs.includes(parseInt(filters.jobId))
+            );
+        }
+        
+        if (filters.skills && filters.skills.length) {
+            filteredCandidates = filteredCandidates.filter(candidate => 
+                filters.skills.some(skill => candidate.skills.includes(skill))
+            );
+        }
+        
+        return filteredCandidates;
     },
 
-    async updateCandidateStatus(candidateId, newStatus) {
+    updateCandidateStatus: (candidateId, newStatus) => {
         try {
-            const result = await API.request(`/api/candidates/${candidateId}/status`, {
-                method: 'PUT',
-                body: JSON.stringify({ status: newStatus })
-            });
-
+            const candidate = appState.candidates.find(c => c.id === candidateId);
+            if (!candidate) {
+                throw new Error('Candidate not found');
+            }
+            
+            candidate.status = newStatus;
             showToast(`Candidate status updated to ${newStatus}`, 'success');
-
+            
             if (currentView === 'candidates') {
                 setTimeout(loadCandidates, 100);
             }
-
-            return result.candidate;
+            
+            return candidate;
         } catch (error) {
             showToast(`Error updating candidate status: ${error.message}`, 'error');
             throw error;
         }
     },
 
-    // Interview operations with backend API integration
-    async saveInterview(interviewData) {
+    // Interview operations
+    saveInterview: (interviewData) => {
         try {
             if (!interviewData.candidate_id || !interviewData.job_id || !interviewData.datetime) {
                 throw new Error('Missing required interview fields');
             }
 
-            // Validate candidate and job exist
-            const candidates = await API.getCandidates();
-            const jobs = await API.getJobs();
-
-            const candidate = candidates.find(c => c.id === interviewData.candidate_id);
-            const job = jobs.find(j => j.id === interviewData.job_id);
-
+            const candidate = appState.candidates.find(c => c.id === interviewData.candidate_id);
+            const job = appState.jobs.find(j => j.id === interviewData.job_id);
+            
             if (!candidate || !job) {
                 throw new Error('Invalid candidate or job selected');
             }
 
-            const result = await API.createInterview(interviewData);
+            const newInterview = {
+                ...interviewData,
+                id: generateId(),
+                candidate_name: candidate.name,
+                job_title: job.title,
+                status: 'Scheduled',
+                meeting_link: `https://zoom.us/j/${Math.floor(Math.random() * 1000000000)}`
+            };
 
-            // Update candidate status to "Interview Scheduled"
-            await DB.updateCandidateStatus(candidate.id, 'Interview Scheduled');
-
+            appState.interviews.push(newInterview);
+            
+            DB.updateCandidateStatus(candidate.id, 'Interview Scheduled');
+            
             showToast('Interview scheduled successfully!', 'success');
-            return result.interview;
+            return newInterview;
         } catch (error) {
             showToast(`Error scheduling interview: ${error.message}`, 'error');
             throw error;
         }
     },
 
-    async getInterviews(filters = {}) {
-        try {
-            let interviews = await API.getInterviews();
-
-            if (filters.status) {
-                interviews = interviews.filter(interview =>
-                    interview.status === filters.status
-                );
-            }
-
-            if (filters.date) {
-                interviews = interviews.filter(interview => {
-                    const interviewDate = new Date(interview.datetime).toDateString();
-                    return interviewDate === filters.date;
-                });
-            }
-
-            return interviews;
-        } catch (error) {
-            console.error('Error fetching interviews:', error);
-            showToast('Error loading interviews from server', 'error');
-            return [];
+    getInterviews: (filters = {}) => {
+        let filteredInterviews = [...appState.interviews];
+        
+        if (filters.status) {
+            filteredInterviews = filteredInterviews.filter(interview => 
+                interview.status === filters.status
+            );
         }
+        
+        if (filters.date) {
+            filteredInterviews = filteredInterviews.filter(interview => {
+                const interviewDate = new Date(interview.datetime).toDateString();
+                return interviewDate === filters.date;
+            });
+        }
+        
+        return filteredInterviews;
     }
 };
 
@@ -936,195 +869,33 @@ function loadViewContent(viewName) {
     }
 }
 
-// Dashboard Functions - Now using Backend API
-async function loadDashboard() {
-    try {
-        // Load analytics data from backend
-        const analytics = await API.getAnalytics();
-
-        // Defensive check for analytics object structure
-        if (!analytics || typeof analytics !== 'object') {
-            throw new Error('Invalid analytics data received');
-        }
-
-        // Update dashboard stats
-        document.getElementById('total-jobs').textContent = analytics.total_jobs ?? 0;
-        document.getElementById('total-candidates').textContent = analytics.total_candidates ?? 0;
-        document.getElementById('total-interviews').textContent = analytics.total_interviews ?? 0;
-
-        // Calculate active jobs
-        document.getElementById('active-jobs').textContent = analytics.success_metrics?.active_jobs ?? 0;
-
-        // Calculate interview rate
-        document.getElementById('interview-rate').textContent = `${analytics.success_metrics?.interview_rate ?? 0}%`;
-
-        // Update pipeline chart
-        updatePipelineChart(analytics.pipeline_stats ?? {});
-
-        // Update recent activity
-        updateRecentActivity(analytics.recent_activity ?? []);
-
-        // Update top skills chart
-        updateTopSkillsChart(analytics.top_skills ?? []);
-
-        showToast('Dashboard updated with latest data from server', 'success');
-
-    } catch (error) {
-        console.error('Error loading dashboard:', error);
-        showToast('Error loading dashboard data from server', 'error');
-
-        // Fallback to basic stats if API fails
-        try {
-            const jobs = await API.getJobs();
-            const candidates = await API.getCandidates();
-            const interviews = await API.getInterviews();
-
-            document.getElementById('total-jobs').textContent = jobs.length;
-            document.getElementById('total-candidates').textContent = candidates.length;
-            document.getElementById('total-interviews').textContent = interviews.length;
-            document.getElementById('active-jobs').textContent = jobs.filter(job => job.status === 'Active').length;
-            document.getElementById('interview-rate').textContent = candidates.length > 0 ? Math.round((interviews.length / candidates.length) * 100) + '%' : '0%';
-        } catch (fallbackError) {
-            console.error('Fallback dashboard load failed:', fallbackError);
-        }
-    }
-}
-
-// Helper functions for dashboard analytics
-function updatePipelineChart(pipelineStats) {
-    const ctx = document.getElementById('pipelineChart');
-    if (!ctx) return;
-
-    const labels = Object.keys(pipelineStats);
-    const data = Object.values(pipelineStats);
-
-    if (labels.length === 0) {
-        labels.push('No Data');
-        data.push(1);
-    }
-
-    new Chart(ctx.getContext('2d'), {
-        type: 'doughnut',
-        data: {
-            labels: labels,
-            datasets: [{
-                data: data,
-                backgroundColor: ['#1FB8CD', '#FFC185', '#B4413C', '#ECEBD5', '#5D878F'],
-                borderColor: ['#1FB8CD', '#FFC185', '#B4413C', '#ECEBD5', '#5D878F'],
-                borderWidth: 2
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'bottom',
-                    labels: {
-                        padding: 20,
-                        usePointStyle: true
-                    }
-                }
-            }
-        }
-    });
-}
-
-function updateRecentActivity(recentActivity) {
-    const container = document.getElementById('recent-applications');
-    if (!container) return;
-
-    if (recentActivity.length === 0) {
-        container.innerHTML = '<div class="empty-state">No recent activity</div>';
-        return;
-    }
-
-    container.innerHTML = recentActivity.slice(0, 8).map(activity => {
-        const iconMap = {
-            'candidate': 'user-plus',
-            'interview': 'calendar',
-            'job': 'briefcase',
-            'application': 'file-text'
-        };
-
-        return `
-            <div class="recent-application-item">
-                <div class="candidate-avatar" style="width: 40px; height: 40px; font-size: 14px;">
-                    <i data-lucide="${iconMap[activity.type] || 'activity'}"></i>
-                </div>
-                <div style="flex: 1; min-width: 0;">
-                    <div style="font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--color-text-high-contrast);">
-                        ${activity.message}
-                    </div>
-                    <div style="font-size: 12px; color: var(--color-text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                        ${activity.time ? formatDate(activity.time) : 'Recent'}
-                    </div>
-                </div>
-            </div>
-        `;
-    }).join('');
-
-    lucide.createIcons();
-}
-
-function updateTopSkillsChart(topSkills) {
-    const ctx = document.getElementById('skillsChart');
-    if (!ctx) return;
-
-    if (topSkills.length === 0) {
-        topSkills.push({ skill: 'No Data', count: 1 });
-    }
-
-    new Chart(ctx.getContext('2d'), {
-        type: 'bar',
-        data: {
-            labels: topSkills.map(item => item.skill),
-            datasets: [{
-                label: 'Candidates with Skill',
-                data: topSkills.map(item => item.count),
-                backgroundColor: '#1FB8CD',
-                borderColor: '#1FB8CD',
-                borderWidth: 2
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        stepSize: 1
-                    }
-                }
-            },
-            plugins: {
-                legend: {
-                    display: false
-                }
-            }
-        }
-    });
+// Dashboard Functions
+function loadDashboard() {
+    updateDashboardMetrics();
+    setTimeout(() => {
+        renderPipelineChart();
+        renderRecentApplications();
+    }, 100);
 }
 
 function updateDashboardMetrics() {
     const jobs = DB.getJobs({ status: 'Active' });
     const candidates = DB.getCandidates();
     const interviews = DB.getInterviews({ status: 'Scheduled' });
-
+    
     const totalJobsEl = document.getElementById('total-jobs');
     const totalCandidatesEl = document.getElementById('total-candidates');
     const scheduledInterviewsEl = document.getElementById('scheduled-interviews');
     const avgMatchScoreEl = document.getElementById('avg-match-score');
-
+    
     if (totalJobsEl) totalJobsEl.textContent = jobs.length;
     if (totalCandidatesEl) totalCandidatesEl.textContent = candidates.length;
     if (scheduledInterviewsEl) scheduledInterviewsEl.textContent = interviews.length;
-
+    
     const allScores = candidates.flatMap(c => c.match_scores.map(s => s.score));
-    const avgScore = allScores.length ?
+    const avgScore = allScores.length ? 
         Math.round(allScores.reduce((a, b) => a + b, 0) / allScores.length) : 0;
-
+    
     if (avgMatchScoreEl) avgMatchScoreEl.textContent = avgScore + '%';
 }
 
@@ -1212,76 +983,59 @@ function renderRecentApplications() {
     }).join('');
 }
 
-// Job Management Functions - Now using Backend API
-async function loadJobs() {
-    try {
-        await renderJobsGrid();
-        populateSkillsSelector();
-    } catch (error) {
-        console.error('Error loading jobs:', error);
-        showToast('Error loading jobs from server', 'error');
-    }
+// Job Management Functions
+function loadJobs() {
+    renderJobsGrid();
+    populateSkillsSelector();
 }
 
-async function renderJobsGrid() {
+function renderJobsGrid() {
     const container = document.getElementById('jobs-grid');
     if (!container) return;
-
-    try {
-        const jobs = await API.getJobs();
-
-        if (jobs.length === 0) {
-            container.innerHTML = `
-                <div class="empty-state">
-                    <i data-lucide="briefcase" style="width: 64px; height: 64px; margin-bottom: 16px; color: var(--color-primary-pink);"></i>
-                    <h3>No jobs posted yet</h3>
-                    <p>Create your first job posting to get started</p>
-                </div>
-            `;
-            lucide.createIcons();
-            return;
-        }
-
-        container.innerHTML = jobs.map(job => `
-            <div class="job-card">
-                <div class="job-card-title">${job.title}</div>
-                <div class="job-card-meta">
-                    <span><i data-lucide="calendar"></i> ${formatDate(job.created_at)}</span>
-                    <span><i data-lucide="users"></i> ${job.applications_count || 0} applications</span>
-                    <span><i data-lucide="briefcase"></i> ${job.experience_level || 'Not specified'}</span>
-                    ${job.location ? `<span><i data-lucide="map-pin"></i> ${job.location}</span>` : ''}
-                </div>
-                <div class="job-card-description">${job.description}</div>
-                <div class="job-card-skills">
-                    ${job.skills ? job.skills.slice(0, 6).map(skill => `<span class="skill-tag">${skill}</span>`).join('') : ''}
-                    ${job.skills && job.skills.length > 6 ? `<span class="skill-tag">+${job.skills.length - 6} more</span>` : ''}
-                </div>
-                <div class="job-card-actions">
-                    <button class="btn-secondary" onclick="editJob(${job.id})">
-                        <i data-lucide="edit"></i> Edit
-                    </button>
-                    <button class="btn-secondary" onclick="viewJobApplications(${job.id})">
-                        <i data-lucide="eye"></i> Applications
-                    </button>
-                    <button class="btn-secondary" onclick="confirmDeleteJob(${job.id})" style="color: #ef4444;">
-                        <i data-lucide="trash"></i> Delete
-                    </button>
-                </div>
-            </div>
-        `).join('');
-
-        lucide.createIcons();
-    } catch (error) {
-        console.error('Error rendering jobs grid:', error);
+    
+    const jobs = DB.getJobs();
+    
+    if (jobs.length === 0) {
         container.innerHTML = `
             <div class="empty-state">
-                <i data-lucide="alert-triangle" style="width: 64px; height: 64px; margin-bottom: 16px; color: #ef4444;"></i>
-                <h3>Error loading jobs</h3>
-                <p>Unable to load jobs from server. Please try again.</p>
+                <i data-lucide="briefcase" style="width: 64px; height: 64px; margin-bottom: 16px; color: var(--color-primary-pink);"></i>
+                <h3>No jobs posted yet</h3>
+                <p>Create your first job posting to get started</p>
             </div>
         `;
         lucide.createIcons();
+        return;
     }
+    
+    container.innerHTML = jobs.map(job => `
+        <div class="job-card">
+            <div class="job-card-title">${job.title}</div>
+            <div class="job-card-meta">
+                <span><i data-lucide="calendar"></i> ${formatDate(job.created_date)}</span>
+                <span><i data-lucide="users"></i> ${job.applications_count} applications</span>
+                <span><i data-lucide="briefcase"></i> ${job.experience_level}</span>
+                ${job.location ? `<span><i data-lucide="map-pin"></i> ${job.location}</span>` : ''}
+            </div>
+            <div class="job-card-description">${job.description}</div>
+            <div class="job-card-skills">
+                ${job.skills.slice(0, 6).map(skill => `<span class="skill-tag">${skill}</span>`).join('')}
+                ${job.skills.length > 6 ? `<span class="skill-tag">+${job.skills.length - 6} more</span>` : ''}
+            </div>
+            <div class="job-card-actions">
+                <button class="btn-secondary" onclick="editJob(${job.id})">
+                    <i data-lucide="edit"></i> Edit
+                </button>
+                <button class="btn-secondary" onclick="viewJobApplications(${job.id})">
+                    <i data-lucide="eye"></i> Applications
+                </button>
+                <button class="btn-secondary" onclick="confirmDeleteJob(${job.id})" style="color: #ef4444;">
+                    <i data-lucide="trash"></i> Delete
+                </button>
+            </div>
+        </div>
+    `).join('');
+    
+    lucide.createIcons();
 }
 
 function populateSkillsSelector() {
@@ -1652,7 +1406,7 @@ function handleFileUpload(files) {
     });
 }
 
-// REAL RESUME PROCESSING FUNCTION - Now using Backend API
+// REAL RESUME PROCESSING FUNCTION
 async function processRealResume(file, container) {
     const loadingDiv = document.createElement('div');
     loadingDiv.className = 'upload-result';
@@ -1662,129 +1416,154 @@ async function processRealResume(file, container) {
             <div>
                 <div style="font-weight: 500; margin-bottom: 4px;">Processing ${file.name}</div>
                 <div style="font-size: 12px; color: var(--color-text-secondary);">
-                    Uploading to server and parsing document...
+                    Extracting text from document...
                 </div>
             </div>
         </div>
     `;
     container.appendChild(loadingDiv);
-
+    
     try {
-        updateProgressBar(20);
-
-        // Upload file to backend API
-        const uploadResult = await API.uploadResume(file);
-
-        updateProgressBar(100);
-
-        // The backend has already processed the resume and saved the candidate
-        const candidate = uploadResult.candidate;
-        const parsingConfidence = uploadResult.parsing_confidence || 0;
-
-        // Store extracted text for preview if available
-        if (candidate.raw_text) {
-            const tempId = 'temp_' + generateId();
-            extractedTextCache[tempId] = {
-                text: candidate.raw_text,
-                confidence: parsingConfidence * 100,
-                filename: file.name,
-                source: candidate.source_document || 'Document'
-            };
+        updateProgressBar(10);
+        
+        let extractedData;
+        const fileName = file.name.toLowerCase();
+        
+        if (fileName.endsWith('.pdf')) {
+            extractedData = await documentParser.parsePDF(file);
+        } else if (fileName.endsWith('.docx') || fileName.endsWith('.doc')) {
+            extractedData = await documentParser.parseDOCX(file);
+        } else {
+            throw new Error('Unsupported file format. Please upload PDF or DOCX files.');
         }
-
-        // Render the results from backend processing
+        
+        updateProgressBar(90);
+        
+        // Store extracted text for preview
+        const tempId = 'temp_' + generateId();
+        extractedTextCache[tempId] = {
+            text: extractedData.text,
+            confidence: extractedData.confidence,
+            filename: file.name,
+            source: extractedData.source
+        };
+        
+        // Extract information from real text
+        const personalInfo = documentParser.extractPersonalInfo(extractedData.text);
+        const skills = documentParser.extractSkills(extractedData.text);
+        const experience = documentParser.extractExperience(extractedData.text);
+        const education = documentParser.extractEducation(extractedData.text);
+        
+        updateProgressBar(100);
+        
+        // Create parsed candidate data
+        const parsedData = {
+            id: tempId,
+            name: personalInfo.name || 'Name not detected',
+            email: personalInfo.email || 'Email not detected',
+            phone: personalInfo.phone || 'Phone not detected',
+            location: personalInfo.location || 'Location not detected',
+            experience: experience,
+            education: education,
+            skills: skills.length ? skills : ['No skills detected'],
+            filename: file.name,
+            extractionConfidence: extractedData.confidence,
+            personalInfoConfidence: personalInfo.confidence,
+            source_document: extractedData.source
+        };
+        
+        // Render the results
         loadingDiv.innerHTML = `
             <h3 style="color: var(--color-text-high-contrast);">
-                <i data-lucide="check-circle"></i>
-                Document Processed: ${candidate.name}
+                <i data-lucide="check-circle"></i> 
+                Document Processed: ${parsedData.name}
             </h3>
             <div style="margin-bottom: 16px; padding: 12px; background: rgba(34, 197, 94, 0.1); border: 2px solid rgba(34, 197, 94, 0.4); border-radius: 8px; color: var(--color-text-high-contrast);">
-                <strong>Backend Processing Complete:</strong> Candidate saved to database<br>
-                <small>Confidence: ${(parsingConfidence * 100).toFixed(1)}% | ID: ${candidate.id}</small>
+                <strong>Overall Extraction Confidence:</strong> ${extractedData.confidence}% - ${extractedData.confidence >= 85 ? 'High' : extractedData.confidence >= 70 ? 'Medium' : 'Low'} quality extraction<br>
+                <small>Source: ${extractedData.source} document</small>
             </div>
             <div class="parsed-info">
                 <div class="info-field">
                     <label>Full Name</label>
                     <div class="value" style="color: var(--color-text-high-contrast); font-weight: bold;">
-                        ${candidate.name}
+                        ${parsedData.name}
+                        ${personalInfo.confidence.name ? `<span style="font-size: 10px; color: var(--color-primary-blue);"> (${personalInfo.confidence.name}%)</span>` : ''}
                     </div>
                 </div>
                 <div class="info-field">
                     <label>Email Address</label>
                     <div class="value" style="color: var(--color-text-high-contrast); font-weight: bold;">
-                        ${candidate.email || 'Not detected'}
+                        ${parsedData.email}
+                        ${personalInfo.confidence.email ? `<span style="font-size: 10px; color: var(--color-primary-blue);"> (${personalInfo.confidence.email}%)</span>` : ''}
                     </div>
                 </div>
                 <div class="info-field">
                     <label>Phone Number</label>
                     <div class="value" style="color: var(--color-text-high-contrast); font-weight: bold;">
-                        ${candidate.phone || 'Not detected'}
+                        ${parsedData.phone}
+                        ${personalInfo.confidence.phone ? `<span style="font-size: 10px; color: var(--color-primary-blue);"> (${personalInfo.confidence.phone}%)</span>` : ''}
                     </div>
                 </div>
                 <div class="info-field">
                     <label>Experience Level</label>
-                    <div class="value" style="color: var(--color-text-high-contrast); font-weight: bold;">
-                        ${candidate.experience || 'Not specified'}
-                    </div>
+                    <div class="value" style="color: var(--color-text-high-contrast); font-weight: bold;">${parsedData.experience}</div>
                 </div>
                 <div class="info-field">
                     <label>Location</label>
                     <div class="value" style="color: var(--color-text-high-contrast); font-weight: bold;">
-                        ${candidate.location || 'Not specified'}
+                        ${parsedData.location}
+                        ${personalInfo.confidence.location ? `<span style="font-size: 10px; color: var(--color-primary-blue);"> (${personalInfo.confidence.location}%)</span>` : ''}
                     </div>
                 </div>
                 <div class="info-field">
                     <label>Education</label>
-                    <div class="value" style="color: var(--color-text-high-contrast); font-weight: bold;">
-                        ${candidate.education ? candidate.education.join(', ') : 'Not specified'}
-                    </div>
+                    <div class="value" style="color: var(--color-text-high-contrast); font-weight: bold;">${parsedData.education}</div>
                 </div>
             </div>
             <div class="info-field" style="grid-column: 1 / -1; margin-top: 16px;">
-                <label>Skills Detected (${candidate.skills ? candidate.skills.length : 0})</label>
+                <label>Skills Detected (${parsedData.skills.length})</label>
                 <div class="candidate-skills" style="margin-top: 8px;">
-                    ${candidate.skills ? candidate.skills.map(skill => `<span class="skill-tag">${skill}</span>`).join('') : '<span class="skill-tag">No skills detected</span>'}
+                    ${parsedData.skills.map(skill => `<span class="skill-tag">${skill}</span>`).join('')}
                 </div>
             </div>
             <div style="margin-top: 24px;">
                 <h4 style="margin-bottom: 12px; color: var(--color-text-high-contrast);">Job Match Analysis</h4>
-                <div id="job-matches-${candidate.id}"></div>
+                <div id="job-matches-${parsedData.id}"></div>
             </div>
             <div style="margin-top: 24px; display: flex; gap: 12px; flex-wrap: wrap;">
-                <button class="btn-primary" onclick="viewCandidateDetails(${candidate.id})">
-                    <i data-lucide="eye"></i> View Candidate Details
+                <button class="btn-primary" onclick="saveParsedCandidate('${parsedData.id}')">
+                    <i data-lucide="save"></i> Save as Candidate
                 </button>
-                <button class="btn-secondary" onclick="showTextPreview('temp_${candidate.id}')">
+                <button class="btn-secondary" onclick="showTextPreview('${parsedData.id}')">
                     <i data-lucide="eye"></i> View Extracted Text
                 </button>
-                <button class="btn-secondary" onclick="scheduleInterviewForCandidate(${candidate.id})">
-                    <i data-lucide="calendar"></i> Schedule Interview
+                <button class="btn-secondary" onclick="showDetailedMatching('${parsedData.id}')">
+                    <i data-lucide="target"></i> Detailed Matching
                 </button>
             </div>
         `;
-
-        // Show job matches for the new candidate
-        showJobMatchesForCandidate(candidate);
-
+        
+        // Store parsed data temporarily
+        window.parsedCandidates = window.parsedCandidates || {};
+        window.parsedCandidates[parsedData.id] = parsedData;
+        
+        // Show job matches
+        showJobMatchesForCandidate(parsedData);
+        
         lucide.createIcons();
-        updateProcessingStatus(`Successfully processed and saved ${candidate.name}'s resume to database`, 'success');
-        showToast(`Resume processed and candidate saved! Database ID: ${candidate.id} 🎉`, 'success');
-
-        // Refresh candidates list if we're on the candidates page
-        if (currentView === 'candidates') {
-            setTimeout(loadCandidates, 500);
-        }
-
+        updateProcessingStatus(`Successfully processed ${parsedData.name}'s resume`, 'success');
+        showToast(`Real data extracted from ${parsedData.name}'s resume! 🎉`, 'success');
+        
     } catch (error) {
         console.error('Resume processing error:', error);
         loadingDiv.innerHTML = `
             <h3 style="color: #ef4444;">
-                <i data-lucide="x-circle"></i>
+                <i data-lucide="x-circle"></i> 
                 Error Processing Resume
             </h3>
             <div style="padding: 16px; background: rgba(239, 68, 68, 0.1); border: 2px solid rgba(239, 68, 68, 0.4); border-radius: 8px; color: var(--color-text-high-contrast);">
                 <strong>Error:</strong> ${error.message}<br>
-                <small>Please ensure the file is a valid PDF or DOCX document and try again.</small>
+                <small>Please ensure the file is a valid PDF or DOCX document with readable text.</small>
             </div>
             <div style="margin-top: 16px;">
                 <button class="btn-secondary" onclick="this.parentElement.parentElement.remove()">
